@@ -1,26 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import reactLogo from './assets/react.svg';
-import { SubsType, toast } from './experiments/Toast';
 import ToastCom from './experiments/ToastCom';
 import viteLogo from '/vite.svg';
+import { toast } from './experiments/Toast';
 
 function App() {
 	const [count, setCount] = useState(0);
-	const [compToast, setT] = useState<SubsType[]>([]);
-	console.log('compToast :', compToast);
 
-	useEffect(() => {
-		const unsubscribe = toast.subscribe(
-			() => <ToastCom />,
-			(com) => {
-				setT(com);
-			}
-		);
-		return () => {
-			unsubscribe();
-		};
-	}, []);
+	// useEffect(() => {
+	// 	const unsubscribe = toast.subscribe(tRef);
+	// 	return () => {
+	// 		unsubscribe();
+	// 	};
+	// }, []);
 
 	return (
 		<>
@@ -45,10 +38,7 @@ function App() {
 				Show Success Toast
 			</button>
 
-			{compToast.map((Comp) => {
-				console.log('Comp :', Comp);
-				Comp();
-			})}
+			<ToastCom />
 
 			{/* <ToastCom /> */}
 			{/* <div>

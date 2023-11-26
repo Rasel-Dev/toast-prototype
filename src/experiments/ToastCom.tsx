@@ -1,7 +1,10 @@
-// import { toast } from './Toast';
+import { useRef } from 'react';
+import { toast } from './Toast';
 
 const ToastCom = () => {
 	// const toastMessages = toast.test();
+	const toastRef = useRef<HTMLDivElement>(null);
+	toast.setRef(toastRef);
 
 	// console.log('toastMessages :', toastMessages);
 
@@ -9,7 +12,7 @@ const ToastCom = () => {
 	// 	console.log('tItem :', tItem);
 	// });
 	return (
-		<div className='toast-container'>
+		<div className='toast-container' ref={toastRef}>
 			{/* {toastMessages.map((tItem) => (
 				<div key={tItem.id} className='toast'>
 					<span>{tItem.message}</span>
