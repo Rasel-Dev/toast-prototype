@@ -1,7 +1,6 @@
-import { reducer } from '../utils/reducer';
-import { promisify } from '../utils/util';
+import { reducer } from './reducer';
+import { promisify } from './util';
 
-/* eslint-disable no-mixed-spaces-and-tabs */
 export type ToastType = { id: string; message: string; timeout?: number };
 export type SType = {
 	toasts: ToastType[];
@@ -87,7 +86,7 @@ export default class Toast {
 	/**
 	 * getState
 	 */
-	public getState() {
+	getState() {
 		return this.state;
 	}
 

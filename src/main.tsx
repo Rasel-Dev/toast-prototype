@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import ToastCom from './experiments/ToastCom.tsx';
+import ToastContainer from './components/ToastContainer.tsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<App />
-		<ToastCom />
+		<ToastContainer />
 	</React.StrictMode>
 );

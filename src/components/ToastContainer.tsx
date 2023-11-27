@@ -1,42 +1,10 @@
-import React, { useState } from 'react';
+import { useRef } from 'react';
+import { toast } from '../utils/Toast';
 
-function ToastContainer() {
-	const [toastQueue, setToastQueue] = useState([]);
-	const [isToastBeingDisplayed, setIsToastBeingDisplayed] = useState(false);
-
-	function showToast(message, type, options) {
-		const toast = { message, type, options };
-		setToastQueue((prevQueue) => [...prevQueue, toast]);
-
-		if (!isToastBeingDisplayed) {
-			displayNextToast();
-		}
-	}
-
-	function displayNextToast() {
-		if (toastQueue.length === 0) {
-			setIsToastBeingDisplayed(false);
-			return;
-		}
-
-		setIsToastBeingDisplayed(true);
-
-		const toast = toastQueue[0];
-		setToastQueue((prevQueue) => prevQueue.slice(1));
-
-		// Render the toast notification
-		renderToastNotification(toast);
-
-		setTimeout(displayNextToast, toast.options.duration);
-	}
-
-	return (
-		<div>
-			{toastQueue.map((toast) => (
-				<div key={toast.message}>{toast.message}</div>
-			))}
-		</div>
-	);
-}
+const ToastContainer = () => {
+	const toastRef = useRef<HTMLDivElement>(null);
+	toast.setRef(toastRef);
+	return <div className='toast-container' ref={toastRef} />;
+};
 
 export default ToastContainer;

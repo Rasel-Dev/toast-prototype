@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import { SType } from '../experiments/Toast';
+import { SType } from './Toast';
 import { genId } from './util';
 
 export const reducer = (state: SType, action: Record<string, unknown>) => {

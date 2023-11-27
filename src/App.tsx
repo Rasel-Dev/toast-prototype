@@ -1,6 +1,6 @@
 import './App.css';
 import reactLogo from './assets/react.svg';
-import { toast } from './experiments/Toast';
+import { toast } from './utils/Toast';
 import viteLogo from '/vite.svg';
 
 function App() {
