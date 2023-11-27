@@ -1,19 +1,9 @@
 import './App.css';
 import reactLogo from './assets/react.svg';
 import { toast } from './experiments/Toast';
-import ToastCom from './experiments/ToastCom';
 import viteLogo from '/vite.svg';
 
 function App() {
-	// const [count, setCount] = useState(0);
-
-	// useEffect(() => {
-	// 	const unsubscribe = toast.subscribe(tRef);
-	// 	return () => {
-	// 		unsubscribe();
-	// 	};
-	// }, []);
-
 	return (
 		<>
 			<div>
@@ -36,15 +26,6 @@ function App() {
 			<button onClick={() => toast.info('Success Message')}>
 				Show Success Toast
 			</button>
-
-			<ToastCom />
-
-			{/* <ToastCom /> */}
-			{/* <div>
-				<FirstComp />
-				<SecondComp />
-				<ThirdComp />
-			</div> */}
 			<p className='read-the-docs'>
 				Click on the Vite and React logos to learn more
 			</p>
