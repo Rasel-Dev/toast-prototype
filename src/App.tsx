@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import './App.css';
 import reactLogo from './assets/react.svg';
+import { toast } from './experiments/Toast';
 import ToastCom from './experiments/ToastCom';
 import viteLogo from '/vite.svg';
-import { toast } from './experiments/Toast';
 
 function App() {
-	const [count, setCount] = useState(0);
+	// const [count, setCount] = useState(0);
 
 	// useEffect(() => {
 	// 	const unsubscribe = toast.subscribe(tRef);
@@ -14,6 +13,8 @@ function App() {
 	// 		unsubscribe();
 	// 	};
 	// }, []);
+
+	let count = 1;
 
 	return (
 		<>
@@ -27,14 +28,14 @@ function App() {
 			</div>
 			<h1>Vite + React</h1>
 			<div className='card'>
-				<button onClick={() => setCount((count) => count + 1)}>
+				{/* <button onClick={() => setCount((count) => count + 1)}>
 					count is {count}
-				</button>
+				</button> */}
 				<p>
 					Edit <code>src/App.tsx</code> and save to test HMR
 				</p>
 			</div>
-			<button onClick={() => toast.info('Success Message')}>
+			<button onClick={() => toast.info(`Success Message ${count++}`)}>
 				Show Success Toast
 			</button>
 
