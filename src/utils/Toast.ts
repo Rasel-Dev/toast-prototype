@@ -11,7 +11,7 @@ export type SubsType = React.RefObject<HTMLDivElement>;
 
 export default class Toast {
 	private state: SType = { toasts: [], defaultTimeout: 5000, total: 0 };
-	private subscribers: SubsType | null = null;
+	private container: SubsType | null = null;
 
 	constructor(initState: Record<string, string>) {
 		this.state = { ...this.state, ...initState };
@@ -19,7 +19,7 @@ export default class Toast {
 
 	private insertToast(toast: ToastType) {
 		// console.log('insertToast :', toast);
-		const r = this.subscribers;
+		const r = this.container;
 		if (r && r.current) {
 			r.current.appendChild(
 				(() => {
@@ -35,7 +35,7 @@ export default class Toast {
 
 	private removeToast(toastId: string) {
 		// console.log('removeToast :', toastId);
-		const r = this.subscribers;
+		const r = this.container;
 
 		const newState = reducer(this.state, { type: 'rem', id: toastId });
 
@@ -58,7 +58,7 @@ export default class Toast {
 	private dispatch(action: Record<string, unknown>) {
 		const newState = reducer(this.state, action);
 		this.state = { ...newState, total: newState.toasts.length };
-		const r = this.subscribers;
+		const r = this.container;
 		if (r && r.current) {
 			const toasts = this.state.toasts;
 			const els = [...Object.values(r.current.childNodes)] as HTMLElement[];
@@ -80,7 +80,7 @@ export default class Toast {
 	 * setRef
 	 */
 	public setRef(ref: SubsType) {
-		this.subscribers = ref;
+		this.container = ref;
 	}
 
 	/**
