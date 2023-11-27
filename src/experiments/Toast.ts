@@ -8,85 +8,58 @@ type SType = {
 export type SubsType = React.RefObject<HTMLDivElement>;
 const genId = () => (Math.random() + 1).toString(36).substring(7);
 
-const createHTML = () => {
-	const els = [];
+const reducer = (state: SType, action: Record<string, unknown>) => {
+	switch (action.type) {
+		case 'info':
+			return {
+				...state,
+				toasts: state?.toasts
+					? [
+							...state.toasts,
+							{
+								id: genId(),
+								message: action?.message + '',
+								timeout: 2000,
+							},
+					  ]
+					: [
+							{
+								id: genId(),
+								message: action?.message + '',
+								timeout: 2000,
+							},
+					  ],
+			};
+		case 'warn':
+			return {
+				...state,
+				toasts: state?.toasts
+					? [
+							...state.toasts,
+							{
+								id: genId(),
+								message: action?.message + '',
+								timeout: Date.now() + 5 * 1000,
+							},
+					  ]
+					: [
+							{
+								id: genId(),
+								message: action?.message + '',
+								timeout: Date.now() + 5 * 1000,
+							},
+					  ],
+			};
+		case 'rem':
+			return {
+				...state,
+				toasts: state?.toasts.filter((t) => t.id !== action.id),
+			};
 
-	for (let i = 0; i < 5; i++) {
-		const el = document.createElement('h3');
-		el.setAttribute('id', `toast__${genId()}`);
-
-		els.push(el);
+		default:
+			return state;
 	}
-
-	return els;
 };
-const createToasts = (): ToastType[] => {
-	const toasts: ToastType[] = [];
-
-	for (let i = 0; i < 5; i++) {
-		const toast = {
-			id: genId(),
-			message: `dummy message ${i + 1}`,
-			timeout: Math.random() * 5000,
-		};
-		toasts.push(toast);
-	}
-
-	return toasts;
-};
-
-// const reducer = (state: SType, action: Record<string, unknown>) => {
-// 	switch (action.type) {
-// 		case 'info':
-// 			return {
-// 				...state,
-// 				toasts: state?.toasts
-// 					? [
-// 							...state.toasts,
-// 							{
-// 								id: genId(),
-// 								message: action?.message + '',
-// 								timeout: 2000,
-// 							},
-// 					  ]
-// 					: [
-// 							{
-// 								id: genId(),
-// 								message: action?.message + '',
-// 								timeout: 2000,
-// 							},
-// 					  ],
-// 			};
-// 		case 'warn':
-// 			return {
-// 				...state,
-// 				toasts: state?.toasts
-// 					? [
-// 							...state.toasts,
-// 							{
-// 								id: genId(),
-// 								message: action?.message + '',
-// 								timeout: Date.now() + 5 * 1000,
-// 							},
-// 					  ]
-// 					: [
-// 							{
-// 								id: genId(),
-// 								message: action?.message + '',
-// 								timeout: Date.now() + 5 * 1000,
-// 							},
-// 					  ],
-// 			};
-// 		case 'rem':
-// 			return {
-// 				...state,
-// 				toasts: state?.toasts.filter((t) => t.id !== action.id),
-// 			};
-
-// 		default:
-// 			return state;
-// 	}
-// };
 
 // function* gen() {
 
@@ -112,8 +85,7 @@ export default class Toast {
 	 * dispatch
 	 */
 	private dispatch(action: Record<string, unknown>) {
-		// const newState = reducer(this.state, action);
-		console.log(action);
+		const newState = reducer(this.state, action);
 		// console.log(
 		// 	'newState.toasts.length !== this.state.total :',
 		// 	newState.toasts.length !== this.state.total,
@@ -121,142 +93,81 @@ export default class Toast {
 		// 	this.state.total
 		// );
 
-		const newState: SType = {
-			toasts: createToasts(),
-		};
 		if (newState.toasts.length !== this.state.total) {
 			this.state = { ...newState, total: newState.toasts.length };
-			this.notifySubscribers();
+			// this.notifySubscribers();
 
-			// eslint-disable-next-line no-debugger
 			const r = this.subscribers;
 			if (r && r.current) {
 				const els = [...Object.values(r.current.childNodes)] as HTMLElement[];
-				const testEls: HTMLElement[] = createHTML();
 				const toasts = this.state.toasts;
 
-				console.log({ testEls }, 'top');
+				const elsIds = els.map((el) => el?.id);
+				console.log('elsIds :', elsIds);
 
-				els.forEach((ch) => {
-					if (!toasts.length || !ch) return;
+				const unmounts = toasts.map((t, ind) => {
+					console.log('ind :', ind);
+					// if (ind >= 2) return;
 
-					const ind = toasts.findIndex((t) => {
-						// console.log(`toast__${t?.id}`, ch?.id);
+					const id = `toast__${t?.id}`;
 
-						return `toast__${t?.id}` === ch?.id;
-					});
+					if (!elsIds.includes(id)) {
+						this.insertToast(t);
 
-					setTimeout(() => {
-						// console.log({ ch }, 'removing');
+						return;
+					}
 
-						// this.state.toasts = toasts.filter((toast) => toast.id !== ch.id);
-
-						console.log({ ind, ch });
-
-						if (ind !== -1) {
-							// els = els.filter((c) => c?.id !== toasts[ind].id);
-							const elInd = els.findIndex((el) => {
-								console.log('elId: ' + el?.id, 'chId: ' + ch?.id);
-								return el?.id === ch?.id;
-							});
-							const tIndex = this.state.toasts.findIndex((t) => {
-								// console.log(`toast__${t?.id}`, ch?.id);
-
-								return `toast__${t?.id}` === ch?.id;
-							});
-
-							const deletedEl = els.splice(elInd, 1);
-
-							const deletedToast = this.state.toasts.splice(tIndex, 1);
-
-							console.log({ deletedEl, deletedToast });
-
-							ch.remove();
-						}
-					}, this.state.toasts[ind].timeout);
+					return t;
 				});
-				console.log(els, toasts, 'bottom');
 
-				/**
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 *
-				 */
+				console.log({ unmounts });
 
-				// const els = Object.values(r.current.childNodes) as HTMLElement[];
+				// els.forEach((ch) => {
+				// 	if (!toasts.length || !ch) return;
 
-				// let ID = '';
-				// console.log('obj :', obj);
-				// const ids = this.state.toasts.find(t => t.id = );
-				// console.log('ids :', ids);
-				// const el: Record<string, [HTMLElement, number]> = {};
-				// const ids = this.state.toasts.map((item) => item.id);
-				// console.log('ids :', ids);
-
-				// els.forEach((item) => {
-				// 	const time =
-				// 		this.state.toasts.find((t) => `toast__${t.id}` === item.id)
-				// 			?.timeout || 0;
-				// 	// console.log('time :', time);
-
-				// 	el[item.id] = [item, time];
-				// });
-
-				// const keys = Object.keys(el);
-				// console.log({ el, els: els.length });
-
-				// keys.forEach(() => {
-				// 	setTimeout(() => {
-				// 		console.log('first');
-				// 	}, 5000);
-				// });
-
-				// while (keys.length) {
-				// const interval = setInterval(() => {
-				// 	// console.log('Rendering out of loop', keys);
-				// 	keys.forEach((k) => {
-				// 		console.log('Rendering', !!el[k]);
-
-				// 		if (!el[k]) {
-				// 			clearInterval(interval);
-				// 			return;
-				// 		}
-
-				// 		const isRem = el[k][1] < Date.now();
-
-				// 		if (isRem) {
-				// 			el[k][0].remove();
-				// 			delete el[k];
-				// 		}
+				// 	const ind = toasts.findIndex((t) => {
+				// 		console.log(`toast__${t?.id}`, ch?.id);
+				// 		return `toast__${t?.id}` === ch?.id;
 				// 	});
-				// 	// if (!keys.length) {
-				// 	// 	clearInterval(interval);
-				// 	// }
-				// }, 1000);
-				// }
 
-				// console.log('el :', el);
+				// 	setTimeout(() => {
+				// 		// console.log({ ch }, 'removing');
+
+				// 		console.log({ ind, ch });
+
+				// 		if (ind !== -1) {
+				// 			// els = els.filter((c) => c?.id !== toasts[ind].id);
+
+				// 			// const elInd = els.findIndex((el) => el?.id === ch?.id);
+				// 			// const tIndex = this.state.toasts.findIndex(
+				// 			// 	(t) => `toast__${t?.id}` === ch?.id
+				// 			// );
+
+				// 			// const deletedEl = els.splice(elInd, 1);
+
+				// 			// const deletedToast = this.state.toasts.splice(tIndex, 1);
+
+				// 			// console.log({ deletedEl, deletedToast });
+
+				// 			// console.log(ch.remove(), ch);
+				// 		}
+				// 	}, this.state.toasts[ind].timeout);
+				// });
+				// console.log(els, toasts, 'bottom');
 			}
 		}
 
-		console.log(this.state.toasts, 'from last');
+		// console.log(this.state.toasts, 'from last');
+
+		// this.notifySubscribers();
 	}
 
 	/**
 	 * removeToast
 	 */
-	public removeToast(toastId: string) {
-		this.dispatch({ type: 'rem', id: toastId });
-	}
+	// public removeToast(toastId: string) {
+	// 	this.dispatch({ type: 'rem', id: toastId });
+	// }
 
 	/**
 	 * info
@@ -295,18 +206,116 @@ export default class Toast {
 	 */
 	private notifySubscribers() {
 		const r = this.subscribers;
-		const temp = this.state.toasts
-			.map((toast) => `<h3 id="toast__${toast.id}">${toast.message}</h3>`)
-			.join('');
+		// const temp = toasts
+		// 	.map((toast) => `<h3 id="toast__${toast.id}">${toast.message}</h3>`)
+		// 	.join('');
 		if (r && r.current) {
-			r.current.innerHTML = temp;
-		}
+			r.current.appendChild(
+				(() => {
+					const el = document.createElement('h3');
+					el.id = `toast__${genId()}`;
+					el.innerText = 'Message';
 
+					return el;
+				})()
+			);
+
+			// r.current.innerHTML = temp;
+
+			// r.current.insertAdjacentElement(
+			// 	'afterbegin',
+			// 	(() => {
+			// 		const el = document.createElement('h3');
+			// 		el.id = `toast__${genId()}`;
+			// 		el.innerText = 'Message';
+
+			// 		return el;
+			// 	})()
+			// );
+		}
 		// this.subscribers.forEach((cb) => {
 		// 	// console.log('cb :', cb);
 		// 	cb();
 		// });
 		// console.log('this.subscribers :', this.subscribers);
+	}
+
+	private insertToast(toast: ToastType) {
+		const r = this.subscribers;
+		if (r && r.current) {
+			r.current.appendChild(
+				(() => {
+					const el = document.createElement('h3');
+					el.id = `toast__${toast.id}`;
+					el.innerText = toast.message;
+
+					return el;
+				})()
+			);
+		}
+	}
+
+	private removeToast(toastId: string) {
+		const r = this.subscribers;
+
+		const newState = reducer(this.state, { type: 'rem', id: toastId });
+
+		if (r && r.current) {
+			const els = [...Object.values(r.current.childNodes)] as HTMLElement[];
+
+			const child = els.find((el) => el?.id === `toast__${toastId}`);
+
+			if (!child) return;
+
+			child?.remove();
+
+			this.state = newState;
+
+			// els.forEach((ch) => {
+			// 	if (!toasts.length || !ch) return;
+
+			// 	const ind = toasts.findIndex((t) => {
+			// 		console.log(`toast__${t?.id}`, ch?.id);
+			// 		return `toast__${t?.id}` === ch?.id;
+			// 	});
+
+			// 	setTimeout(() => {
+			// 		// console.log({ ch }, 'removing');
+
+			// 		console.log({ ind, ch });
+
+			// 		if (ind !== -1) {
+			// 			// els = els.filter((c) => c?.id !== toasts[ind].id);
+			// 			const elInd = els.findIndex((el) => el?.id === ch?.id);
+			// 			const tIndex = this.state.toasts.findIndex(
+			// 				(t) => `toast__${t?.id}` === ch?.id
+			// 			);
+
+			// 			const deletedEl = els.splice(elInd, 1);
+
+			// 			const deletedToast = this.state.toasts.splice(tIndex, 1);
+
+			// 			console.log({ deletedEl, deletedToast });
+
+			// 			console.log(ch.remove(), ch);
+			// 		}
+			// 	}, this.state.toasts[ind].timeout);
+			// });
+			/** */
+			// 1) Find node element index by ID from child’s
+			// 2) Remove from DOM
+			// 3) remove from State
+			// 4) void return
+			// r.current.appendChild(
+			// 	(() => {
+			// 		const el = document.createElement('h3');
+			// 		el.id = `toast__${toast.id}`;
+			// 		el.innerText = toast.message
+
+			// 		return el;
+			// 	})()
+			// );
+		}
 	}
 }
 

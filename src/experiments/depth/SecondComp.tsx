@@ -1,4 +1,4 @@
-import { publishToast } from '../Toast';
+import { publishToast } from '../ToastTest';
 
 const SecondComp = () => {
 	return (

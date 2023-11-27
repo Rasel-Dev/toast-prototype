@@ -14,8 +14,6 @@ function App() {
 	// 	};
 	// }, []);
 
-	let count = 1;
-
 	return (
 		<>
 			<div>
@@ -35,7 +33,7 @@ function App() {
 					Edit <code>src/App.tsx</code> and save to test HMR
 				</p>
 			</div>
-			<button onClick={() => toast.info(`Success Message ${count++}`)}>
+			<button onClick={() => toast.info('Success Message')}>
 				Show Success Toast
 			</button>
 
