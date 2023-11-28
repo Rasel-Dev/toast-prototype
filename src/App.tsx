@@ -1,35 +1,35 @@
 import './App.css';
-import reactLogo from './assets/react.svg';
-import { toast } from './utils/Toast';
-import viteLogo from '/vite.svg';
+import { SecondTemplateInfo, SingleLineInfo } from './components/toasts/Info';
+import {
+	SecondTemplateError,
+	SingleLineError,
+} from './components/toasts/error';
+import {
+	SecondTemplateSuccess,
+	SingleLineSuccess,
+} from './components/toasts/success';
+import {
+	SecondTemplateWarning,
+	SingleLineWarning,
+} from './components/toasts/warning';
 
 function App() {
 	return (
-		<>
-			<div>
-				<a href='https://vitejs.dev' target='_blank'>
-					<img src={viteLogo} className='logo' alt='Vite logo' />
-				</a>
-				<a href='https://react.dev' target='_blank'>
-					<img src={reactLogo} className='logo react' alt='React logo' />
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className='card'>
-				{/* <button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button> */}
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<button onClick={() => toast.info('Success Message')}>
-				Show Success Toast
-			</button>
-			<p className='read-the-docs'>
-				Click on the Vite and React logos to learn more
-			</p>
-		</>
+		<div className='flex flex-col gap-8'>
+			<h1 className='text-3xl text-left mt-5'>SingleLine Template</h1>
+
+			<SingleLineInfo />
+			<SingleLineSuccess />
+			<SingleLineWarning />
+			<SingleLineError />
+
+			<h1 className='text-3xl text-left mt-5'>Second Template</h1>
+
+			<SecondTemplateInfo />
+			<SecondTemplateSuccess />
+			<SecondTemplateWarning />
+			<SecondTemplateError />
+		</div>
 	);
 }
 
